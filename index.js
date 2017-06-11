@@ -12,6 +12,10 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+app.all('*', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+})
 app.use('/', routes);
 
 app.get('/', (req, res, next) => {
