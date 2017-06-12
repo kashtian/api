@@ -1,4 +1,4 @@
-export const port = process.env.PORT || 3005;
+export const port = process.env.PORT || 3010;
 
 export const dbConfig = {
     host: process.env.dbHost || '192.168.10.239',
