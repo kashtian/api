@@ -20,11 +20,11 @@ router.get('/sign', (req, res) => {
  * 微信成为开发者接口
  */
 router.get('/beDev', (req, res) => {
-    log.debug('echostr: ', req.body.echostr);
+    log.debug('echostr: ', req.query.echostr);
     let params = [req.query.timestamp, req.query.nonce];
     if (wxDev.checkSignature(params, req.query.signature)) {
         log.debug('send!');
-        res.send(req.body.echostr);
+        res.send(req.query.echostr);
     } else {
         res.send('error');
     }
