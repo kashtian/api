@@ -1,9 +1,14 @@
 import path from 'path';
+import log4js from 'log4js';
 import express from 'express';
 import bodyParser from 'body-parser';
 
 import { port, redisConfig } from './config/sys.config';
 import routes from './routes';
+
+// init log4js
+log4js.configure('./config/log4js.json');
+const log = log4js.getLogger('app');
 
 const app = express();
 
@@ -34,28 +39,31 @@ app.use((req, res, next)=> {
 
 // development error handler
 // will print stacktrace
-app.use((err, req, res, next)=> {
-    res.status(err.status || 500);
-    res.json({
-        code: err.status || 500,
-        msg: err.message
-    });
-});
-
-// production error handler
-// no stacktraces leaked to user
-if (process.argv.indexOf('--production') > -1) {
+if (process.argv.indexOf('--production') < 0) {
     app.use((err, req, res, next)=> {
+        log.error('route error: ', err);
         res.status(err.status || 500);
         res.json({
             code: err.status || 500,
-            msg: "服务器内部错误"|| err.message
+            msg: err.message
         });
     });
-}
+}   
+
+// production error handler
+// no stacktraces leaked to user
+app.use((err, req, res, next)=> {
+    log.error('route error: ', err);
+    res.status(err.status || 500);
+    res.json({
+        code: err.status || 500,
+        msg: "服务器内部错误"|| err.message
+    });
+});
 
 app.listen(port, () => {
     console.log(`==> Listening at http://localhost:${port}`);
+    log.info(`Express server listening on port ${port} with pid ${process.pid}`)
 });
 
 module.exports = app;
