@@ -1,10 +1,6 @@
 import fetch from 'node-fetch';
 import sha1 from 'sha1';
-
-const test = {
-    appID: 'wx9c759c88cb47ffa9',
-    appsecret: 'bc1fd6c2af0eda0ef87bd6f05aa783c5'
-}
+import { wxConfig } from '../../config/sys.config';
 
 let cacheToken = {
         access_token: '',
@@ -31,10 +27,10 @@ export default {
     /**
      * 获取基本的access_token
      */
-    getAccessToken(account) {
+    getAccessToken() {
         if (this.isTokenExpired()) {
             cacheTime.token = new Date();            
-            let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${account.appID}&secret=${account.appsecret}`;
+            let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wxConfig.appID}&secret=${wxConfig.appsecret}`;
             return fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -53,8 +49,8 @@ export default {
     /**
      * 获取jsapi_ticket
      */
-    async getJSApiTicket(account) {
-        let token = await this.getAccessToken(account);
+    async getJSApiTicket() {
+        let token = await this.getAccessToken();
         if (this.isJSApiTicketExpired()) {
             cacheTime.apiTicket = new Date();            
             let url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${token}&type=jsapi`;
@@ -86,12 +82,12 @@ export default {
         return randomStr;
     },
 
-    async generateSignature(url, account = test) {
+    async generateSignature(url) {
         let noncestr = this.getRandomString(),
             timestamp = Date.now(),
             params = [
                 `noncestr=${noncestr}`,
-                `jsapi_ticket=${await this.getJSApiTicket(account)}`,
+                `jsapi_ticket=${await this.getJSApiTicket()}`,
                 `timestamp=${timestamp}`,
                 `url=${url}`
             ];
@@ -99,7 +95,7 @@ export default {
         params.sort();
         let signStr = params.join('&');
         return {
-            appId: account.appID,
+            appId: wxConfig.appID,
             timestamp,
             nonceStr: noncestr,
             signature: sha1(signStr),

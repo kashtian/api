@@ -13,3 +13,8 @@ export const redisConfig = {
     port: process.env.redisPort || 6379,
     db: process.env.redisDB == null ? 1 : process.env.redisDB
 }
+
+export const wxConfig = {
+    appID: process.env.appID || 'wx9c759c88cb47ffa9',
+    appsecret: process.env.appsecret || 'bc1fd6c2af0eda0ef87bd6f05aa783c5'
+}
