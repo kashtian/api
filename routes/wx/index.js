@@ -1,6 +1,9 @@
 import express from 'express';
 import { wx, wxDev } from '../../service';
 import helper from '../helper';
+import log4js from 'log4js';
+
+const log = log4js.getLogger('wx-route');
 
 const router = express.Router();
 
@@ -17,8 +20,10 @@ router.get('/sign', (req, res) => {
  * 微信成为开发者接口
  */
 router.get('/beDev', (req, res) => {
+    log.debug('echostr: ', req.body.echostr);
     let params = [req.query.timestamp, req.query.nonce];
     if (wxDev.checkSignature(params, req.query.signature)) {
+        log.debug('send!');
         res.send(req.body.echostr);
     } else {
         res.send('error');
