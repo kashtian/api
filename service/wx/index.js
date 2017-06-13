@@ -20,13 +20,21 @@ let cacheToken = {
     };
 
 export default {
+    isTokenExpired() {
+        return !cacheTime.token || (new Date() - cacheTime.token > cacheToken.expires_in * 1000)
+    },
+
+    isJSApiTicketExpired() {
+        return !cacheTime.apiTicket || (new Date() - cacheTime.apiTicket > cacheApiTicket.expires_in * 1000)
+    },
+
     /**
      * 获取基本的access_token
      */
-    getAccessToken() {
-        if (!cacheTime.token || (new Date() - cacheTime.token > cacheToken.expires_in * 1000)) {
+    getAccessToken(account) {
+        if (this.isTokenExpired()) {
             cacheTime.token = new Date();            
-            let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${test.appID}&secret=${test.appsecret}`;
+            let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${account.appID}&secret=${account.appsecret}`;
             return fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -45,9 +53,9 @@ export default {
     /**
      * 获取jsapi_ticket
      */
-    async getJSApiTicket() {
-        let token = await this.getAccessToken();
-        if (!cacheTime.apiTicket || (new Date() - cacheTime.apiTicket > cacheApiTicket.expires_in * 1000)) {
+    async getJSApiTicket(account) {
+        let token = await this.getAccessToken(account);
+        if (this.isJSApiTicketExpired()) {
             cacheTime.apiTicket = new Date();            
             let url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${token}&type=jsapi`;
             return fetch(url)
@@ -78,12 +86,12 @@ export default {
         return randomStr;
     },
 
-    async generateSignature(url) {
+    async generateSignature(url, account = test) {
         let noncestr = this.getRandomString(),
             timestamp = Date.now(),
             params = [
                 `noncestr=${noncestr}`,
-                `jsapi_ticket=${await this.getJSApiTicket()}`,
+                `jsapi_ticket=${await this.getJSApiTicket(account)}`,
                 `timestamp=${timestamp}`,
                 `url=${url}`
             ];
@@ -91,7 +99,7 @@ export default {
         params.sort();
         let signStr = params.join('&');
         return {
-            appId: test.appID,
+            appId: account.appID,
             timestamp,
             nonceStr: noncestr,
             signature: sha1(signStr),
