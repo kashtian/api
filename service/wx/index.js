@@ -101,5 +101,17 @@ export default {
             signature: sha1(signStr),
             url
         };
+    },
+
+    // 调用模板消息接口
+    async sendMsg(params) {
+        let token = await this.getAccessToken();
+        return fetch(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${token}`, {
+            method: 'POST',
+            body: JSON.stringify(params),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
     }
 }

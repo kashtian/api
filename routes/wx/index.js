@@ -30,4 +30,14 @@ router.get('/beDev', (req, res) => {
     }
 })
 
+// 测试模板消息接口
+router.post('/sendTest', (req, res) => {
+    wx.sendMsg(req.body)
+        .then(_data => {
+            helper.comSuccess(res, _data);
+        }).catch(err => {
+            helper.comError(res, err);
+        })
+})
+
 export default router;

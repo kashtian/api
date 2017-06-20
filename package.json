@@ -4,7 +4,7 @@
   "description": "all api",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/routes/plate-company.spec.js --recursive --reporter list --compilers js:babel-core/register || exit 0",
+    "test": "mocha test/routes/wx.spec.js --recursive --reporter list --compilers js:babel-core/register || exit 0",
     "dev": "nodemon --ignore test/ -x \"babel-node\" index.js",
     "build": "rimraf dist && webpack --config config/webpack.config.js",
     "start": "node dist --production"
