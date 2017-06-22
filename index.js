@@ -5,12 +5,20 @@ import bodyParser from 'body-parser';
 
 import { port, redisConfig } from './config/sys.config';
 import routes from './routes';
+import { setSocket } from './service';
 
 // init log4js
 log4js.configure('./config/log4js.json');
 const log = log4js.getLogger('app');
 
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+io.on('connection', socket => {
+    setSocket(socket);
+    socket.emit('clientTest'); 
+})
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -61,10 +69,10 @@ app.use((err, req, res, next)=> {
     });
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`==> Listening at http://localhost:${port}`);
     log.info(`Express server listening on port ${port} with pid ${process.pid}`)
 });
 
-module.exports = app;
+module.exports = server;
 
