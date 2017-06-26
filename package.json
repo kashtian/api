@@ -4,7 +4,7 @@
   "description": "all api",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/routes/wx.spec.js --recursive --reporter list --compilers js:babel-core/register || exit 0",
+    "test": "mocha test/routes/crypto.spec.js --recursive --reporter list --compilers js:babel-core/register || exit 0",
     "dev": "nodemon --ignore test/ -x \"babel-node\" index.js",
     "build": "rimraf dist && webpack --config config/webpack.config.js",
     "start": "node dist --production"
@@ -39,12 +39,14 @@
     "connect-redis": "^3.2.0",
     "express": "^4.15.2",
     "express-session": "^1.15.2",
+    "jsonwebtoken": "^7.4.1",
     "log4js": "^1.1.1",
     "mysql": "^2.13.0",
     "node-fetch": "^1.7.1",
     "redis": "^2.7.1",
     "sequelize": "^3.30.4",
     "sha1": "^1.1.1",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "web-push": "^3.2.2"
   }
 }

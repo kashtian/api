@@ -2,6 +2,8 @@ import path from 'path';
 import log4js from 'log4js';
 import express from 'express';
 import bodyParser from 'body-parser';
+import session from 'express-session';
+import connectRedis from 'connect-redis';
 
 import { port, redisConfig } from './config/sys.config';
 import routes from './routes';
@@ -14,6 +16,7 @@ const log = log4js.getLogger('app');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const RedisStore = connectRedis(session);
 
 io.on('connection', socket => {
     setSocket(socket);
@@ -24,9 +27,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+app.use(session({
+    name: 'SSID',
+    secret: 'kash-api',
+    resave: false,
+    saveUninitialized: true,
+    store: new RedisStore(redisConfig)
+}))
 
 app.all('*', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
     next();
 })
 app.use('/', routes);
