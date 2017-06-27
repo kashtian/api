@@ -39,6 +39,22 @@ async function setClients(key, endpoint) {
     redisHelper.setValue('clients', map);
 }
 
+async function deleteClient(key) {
+    let map = await redisHelper.getValue('clients', true) || {};
+    delete map[key];
+    redisHelper.setValue('clients', map);
+}
+
+router.post('/delEndpoint', (req, res) => {
+    if (!req.body.endpoint) {
+        helper.comError(res, {message: 'endpoint can not be empty.'});
+    } else {
+        deleteClient(req.body.endpoint).then(() => {
+            helper.comSuccess(res, null, 'Delete endpoint success')
+        })
+    }
+})
+
 router.get('/test', async (req, res) => {
     let clients = await redisHelper.getValue('clients', true);
     let cacheAppKey = await redisHelper.getValue('cacheAppKey', true);
