@@ -1,10 +1,10 @@
 import express from 'express';
 import wx from './wx';
-import crypto from './crypto';
+import push from './server-push';
 
 const router = express.Router();
 
 router.use('/wx', wx);
-router.use('/crypto', crypto);
+router.use('/push', push);
 
 export default router;
