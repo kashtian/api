@@ -39,7 +39,7 @@ router.post('/delSubscription', (req, res) => {
 })
 
 router.get('/sendMsg', async (req, res) => {
-    pushMsg.sendMsg('通知测试，请知悉');
+    pushMsg.sendMsg(req.query.x || '通知测试，请知悉');
     helper.comSuccess(res, null, 'push success');
 })
 
