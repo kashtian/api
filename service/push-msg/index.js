@@ -1,6 +1,9 @@
 import cryptoHelper from '../crypto';
 import redisHelper from '../redis-helper';
 import webPush from 'web-push';
+import log4js from 'log4js';
+
+const log = log4js.getLogger('push-msg');
 
 let gcmAPIKey = 'AIzaSyBziLvVkl9WFpexjCrhlZNKBqCp08RTfCs',
     subject = 'mailto: tianshiya1991@163.com';
@@ -50,7 +53,7 @@ export default {
                 },
                 TTL: 60
             }, options)).catch(err => {
-                console.log('push error =====>', err);
+                log.error('push error: ', err);
             })
         }
     }
