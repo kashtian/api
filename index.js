@@ -60,7 +60,7 @@ app.use((req, res, next)=> {
 // will print stacktrace
 if (process.argv.indexOf('--production') < 0) {
     app.use((err, req, res, next)=> {
-        log.error('route error: ', err);
+        log.error('route error: ', err, req.path);
         res.status(err.status || 500);
         res.json({
             code: err.status || 500,
@@ -72,7 +72,7 @@ if (process.argv.indexOf('--production') < 0) {
 // production error handler
 // no stacktraces leaked to user
 app.use((err, req, res, next)=> {
-    log.error('route error: ', err);
+    log.error('route error: ', err, req.path);
     res.status(err.status || 500);
     res.json({
         code: err.status || 500,
