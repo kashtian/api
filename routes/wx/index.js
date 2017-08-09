@@ -30,6 +30,11 @@ router.get('/beDev', (req, res) => {
     }
 })
 
+router.post('/beDev', (req, res) => {
+    log.debug('message post param: ', req.body);
+    res.send('wx send message for me successed.');
+})
+
 // 测试模板消息接口
 router.post('/sendTest', (req, res) => {
     wx.sendMsg(req.body)
