@@ -9,7 +9,7 @@ export const dbConfig = {
 }
 
 export const redisConfig = {
-    host: process.env.redisHost || '52.74.165.14',
+    host: process.env.redisHost || 'localhost',
     port: process.env.redisPort || 11001,
     db: process.env.redisDB == null ? 1 : process.env.redisDB
 }
