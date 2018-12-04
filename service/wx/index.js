@@ -1,6 +1,9 @@
 import fetch from 'node-fetch';
 import sha1 from 'sha1';
 import { wxConfig } from '../../config/sys.config';
+import log4js from 'log4js';
+
+const log = log4js.getLogger('wx-service');
 
 let cacheToken = {
         access_token: '',
@@ -34,13 +37,15 @@ export default {
             return fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    console.log('============>refresh access_token');
+                    log.info('refresh access_token==>', data);
                     if (!data.errcode) {                        
                         data.expires_in -= 60;
                         cacheToken = data;
                         return cacheToken.access_token;
                     }
-                });
+                }).catch(err => {
+                  log.error('token error: ', err)
+                })
         } else {
             return Promise.resolve(cacheToken.access_token);
         }
@@ -50,20 +55,22 @@ export default {
      * 获取jsapi_ticket
      */
     async getJSApiTicket() {
-        let token = await this.getAccessToken();
-        if (this.isJSApiTicketExpired()) {
+        if (this.isTokenExpired() || this.isJSApiTicketExpired()) {
+            let token = await this.getAccessToken();
             cacheTime.apiTicket = new Date();            
             let url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${token}&type=jsapi`;
             return fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    console.log('============>refresh api_ticket');
+                    log.info('refresh api_ticket==>', data);
                     if (!data.errcode) {                        
                         data.expires_in -= 60;
                         cacheApiTicket = data;
                         return cacheApiTicket.ticket;
                     }
-                });
+                }).catch(err => {
+                  log.error('api ticket error: ', err)
+                })
         } else {
             return Promise.resolve(cacheApiTicket.ticket);
         }
